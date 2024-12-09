@@ -1,15 +1,16 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const postsRouter = require("./routers/posts");
-
+const postRouter = require("./routers/posts"); // Importa il router
 const app = express();
 const port = 3000;
 
-// Middleware per gestire JSON nel body delle richieste
-app.use(bodyParser.json());
+// Middleware per servire file statici
+app.use(express.static("public"));
+
+// Middleware per leggere il corpo delle richieste in formato JSON
+app.use(express.json()); // Necessario per gestire correttamente le richieste POST
 
 // Rotta principale per i post
-app.use("/posts", postsRouter);
+app.use("/posts", postRouter);
 
 // Rotta di default (opzionale)
 app.get("/", (req, res) => {

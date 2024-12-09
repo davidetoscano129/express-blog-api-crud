@@ -1,18 +1,16 @@
-const posts = require("../data"); // Importa l'elenco dei post
+const posts = require("../data"); // Importa i dati
 
-// Ottieni tutti i post
+// Ottiene tutti i post
 const getAllPosts = (req, res) => {
   res.json({
-    data: posts,
+    posts,
     length: posts.length,
   });
 };
 
-// Ottieni un singolo post tramite ID
+// Ottiene un singolo post tramite ID
 const getPostById = (req, res) => {
-  const postId = parseInt(req.params.id); // Confronto ID come numero
-  const post = posts.find((p) => p.id === postId);
-
+  const post = posts.find((p) => p.id === parseInt(req.params.id)); // Confronto ID come numero
   if (!post) {
     return res.status(404).json({ error: "Post non trovato" });
   }
@@ -25,9 +23,12 @@ const getPostById = (req, res) => {
   res.json(postWithPreview);
 };
 
-// Crea un nuovo post
+// Creazione di un nuovo post
 const createPost = (req, res) => {
   const { title, content, image, tags } = req.body;
+
+  // Stampa il corpo della richiesta nel terminale
+  console.log("Corpo della richiesta ricevuto:", req.body);
 
   // Validazione dei campi obbligatori
   if (!title || !content || !image || !tags) {
@@ -47,20 +48,19 @@ const createPost = (req, res) => {
   res.status(201).json(newPost); // Rispondi con il nuovo post
 };
 
-// Placeholder per le operazioni CRUD future
+// Placeholder per altre funzionalità CRUD
 const updatePost = (req, res) => {
-  res.json("Aggiornamento di un post specifico (non implementato ancora).");
+  res.json("Aggiornamento di un post specifico non implementato ancora.");
 };
 
 const modifyPostFields = (req, res) => {
-  res.json("Modifica di specifici campi di un post (non implementato ancora).");
+  res.json("Modifica di specifici campi di un post non implementata ancora.");
 };
 
 const deletePost = (req, res) => {
-  res.json("Eliminazione di un post (non implementato ancora).");
+  res.json("Eliminazione di un post non implementata ancora.");
 };
 
-// Esporta tutte le funzioni
 module.exports = {
   getAllPosts,
   getPostById,
