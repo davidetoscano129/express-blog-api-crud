@@ -1,71 +1,79 @@
 const posts = require("../data"); // Importa i dati
 
-// Ottiene tutti i post
+// Ottieni tutti i post
 const getAllPosts = (req, res) => {
-  res.json({
-    posts,
-    length: posts.length,
-  });
+    res.json({
+        data: posts,
+        length: posts.length,
+    });
 };
 
-// Ottiene un singolo post tramite ID
+// Ottieni un singolo post tramite ID
 const getPostById = (req, res) => {
-  const post = posts.find((p) => p.id === parseInt(req.params.id)); // Confronto ID come numero
-  if (!post) {
-    return res.status(404).json({ error: "Post non trovato" });
-  }
+    const postId = parseInt(req.params.id); // Converte l'ID in numero
+    const post = posts.find((p) => p.id === postId);
+¢
+    if (!post) {
+        return res.status(404).json({ error: "Post non trovato" });
+    }
 
-  const postWithPreview = {
-    ...post,
-    preview: `<img src="${post.image}" alt="${post.title}" style="max-width: 200px;">`,
-  };
-
-  res.json(postWithPreview);
+    res.json(post);
 };
 
-// Creazione di un nuovo post
+// Crea un nuovo post
 const createPost = (req, res) => {
-  const { title, content, image, tags } = req.body;
+    const { title, content, image, tags } = req.body;
 
-  // Stampa il corpo della richiesta nel terminale
-  console.log("Corpo della richiesta ricevuto:", req.body);
+    // Controlla che tutti i campi siano presenti
+    if (!title || !content || !image || !tags) {
+        return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
+    }
 
-  // Validazione dei campi obbligatori
-  if (!title || !content || !image || !tags) {
-    return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
-  }
+    // Crea un nuovo ID incrementale
+    const newId = posts.length > 0 ? posts[posts.length - 1].id + 1 : 1;
 
-  // Creazione del nuovo post
-  const newPost = {
-    id: posts.length + 1, // Genera un ID incrementale
-    title,
-    content,
-    image,
-    tags,
-  };
+    // Crea il nuovo post
+    const newPost = {
+        id: newId,
+        title,
+        content,
+        image,
+        tags,
+    };
 
-  posts.push(newPost); // Aggiungi il nuovo post all'elenco
-  res.status(201).json(newPost); // Rispondi con il nuovo post
+    // Aggiungi il nuovo post alla lista
+    posts.push(newPost);
+
+    // Rispondi con il nuovo post
+    res.status(201).json(newPost);
 };
 
-// Placeholder per altre funzionalità CRUD
+// Aggiorna un post esistente
 const updatePost = (req, res) => {
-  res.json("Aggiornamento di un post specifico non implementato ancora.");
+    const postId = parseInt(req.params.id); // Ottieni l'ID dal parametro della rotta
+    const { title, content, image, tags } = req.body;
+
+    // Trova il post da aggiornare
+    const post = posts.find((p) => p.id === postId);
+
+    if (!post) {
+        return res.status(404).json({ error: "Post non trovato" });
+    }
+
+    // Aggiorna i campi del post
+    if (title) post.title = title;
+    if (content) post.content = content;
+    if (image) post.image = image;
+    if (tags) post.tags = tags;
+
+    // Rispondi con il post aggiornato
+    res.json(post);
 };
 
-const modifyPostFields = (req, res) => {
-  res.json("Modifica di specifici campi di un post non implementata ancora.");
-};
-
-const deletePost = (req, res) => {
-  res.json("Eliminazione di un post non implementata ancora.");
-};
-
+// Esporta le funzioni del controller
 module.exports = {
-  getAllPosts,
-  getPostById,
-  createPost,
-  updatePost,
-  modifyPostFields,
-  deletePost,
+    getAllPosts,
+    getPostById,
+    createPost,
+    updatePost,
 };
