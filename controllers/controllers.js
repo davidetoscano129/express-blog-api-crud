@@ -3,77 +3,84 @@ const posts = require("../data"); // Importa i dati
 // Ottieni tutti i post
 const getAllPosts = (req, res) => {
     res.json({
-        data: posts,
+        posts,
         length: posts.length,
     });
 };
 
 // Ottieni un singolo post tramite ID
 const getPostById = (req, res) => {
-    const postId = parseInt(req.params.id); // Converte l'ID in numero
+    const postId = parseInt(req.params.id); // Confronto ID come numero
     const post = posts.find((p) => p.id === postId);
-¢
+
     if (!post) {
         return res.status(404).json({ error: "Post non trovato" });
     }
 
-    res.json(post);
+    const postWithPreview = {
+        ...post,
+        preview: `<img src="${post.image}" alt="${post.title}" style="max-width: 200px;">`,
+    };
+
+    res.json(postWithPreview);
 };
 
 // Crea un nuovo post
 const createPost = (req, res) => {
-    const { title, content, image, tags } = req.body;
+    const newPost = req.body;
 
-    // Controlla che tutti i campi siano presenti
-    if (!title || !content || !image || !tags) {
-        return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
+    // Controlla se l'oggetto è valido
+    if (!newPost || !newPost.title || !newPost.content) {
+        return res.status(400).json({ error: "Dati incompleti per creare un nuovo post" });
     }
 
-    // Crea un nuovo ID incrementale
+    // Aggiungi un nuovo ID incrementale
     const newId = posts.length > 0 ? posts[posts.length - 1].id + 1 : 1;
+    const postToAdd = { id: newId, ...newPost };
 
-    // Crea il nuovo post
-    const newPost = {
-        id: newId,
-        title,
-        content,
-        image,
-        tags,
-    };
+    posts.push(postToAdd);
 
-    // Aggiungi il nuovo post alla lista
-    posts.push(newPost);
-
-    // Rispondi con il nuovo post
-    res.status(201).json(newPost);
+    console.log("Nuovo post aggiunto:", postToAdd);
+    res.status(201).json(postToAdd);
 };
 
 // Aggiorna un post esistente
 const updatePost = (req, res) => {
-    const postId = parseInt(req.params.id); // Ottieni l'ID dal parametro della rotta
-    const { title, content, image, tags } = req.body;
+    const postId = parseInt(req.params.id);
+    const updatedData = req.body;
 
-    // Trova il post da aggiornare
-    const post = posts.find((p) => p.id === postId);
+    const postIndex = posts.findIndex((p) => p.id === postId);
 
-    if (!post) {
+    if (postIndex === -1) {
         return res.status(404).json({ error: "Post non trovato" });
     }
 
-    // Aggiorna i campi del post
-    if (title) post.title = title;
-    if (content) post.content = content;
-    if (image) post.image = image;
-    if (tags) post.tags = tags;
+    posts[postIndex] = { ...posts[postIndex], ...updatedData };
 
-    // Rispondi con il post aggiornato
-    res.json(post);
+    console.log("Post aggiornato:", posts[postIndex]);
+    res.json(posts[postIndex]);
 };
 
-// Esporta le funzioni del controller
+// Elimina un post esistente
+const deletePost = (req, res) => {
+    const postId = parseInt(req.params.id);
+
+    const postIndex = posts.findIndex((p) => p.id === postId);
+
+    if (postIndex === -1) {
+        return res.status(404).json({ error: "Post non trovato" });
+    }
+
+    posts.splice(postIndex, 1);
+
+    console.log("Lista aggiornata:", posts);
+    res.status(204).send();
+};
+
 module.exports = {
     getAllPosts,
     getPostById,
     createPost,
     updatePost,
+    deletePost,
 };

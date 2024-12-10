@@ -1,18 +1,16 @@
 const express = require("express");
-const postsRouter = require("./routers/posts"); // Importa il router
-const bodyParser = require("body-parser"); // Per il parsing del body
-
+const postRouter = require("./routers/posts"); // Importa il router
 const app = express();
 const port = 3000;
 
-// Middleware per servire file statici 
+// Middleware per il parsing del body in formato JSON
+app.use(express.json());
+
+// Configura una cartella per i file statici (ad esempio, immagini)
 app.use(express.static("public"));
 
-// Middleware per analizzare il body delle richieste
-app.use(bodyParser.json());
-
 // Rotta principale per i post
-app.use("/posts", postsRouter);
+app.use("/posts", postRouter);
 
 // Rotta di default (opzionale)
 app.get("/", (req, res) => {
@@ -21,5 +19,5 @@ app.get("/", (req, res) => {
 
 // Avvio del server
 app.listen(port, () => {
-    console.log(`Server in ascolto su http://localhost:${port}`);
+    console.log("Server in ascolto");
 });
