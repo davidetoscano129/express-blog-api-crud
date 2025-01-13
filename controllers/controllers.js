@@ -74,7 +74,7 @@ const deletePost = (req, res) => {
     posts.splice(postIndex, 1);
 
     console.log("Lista aggiornata:", posts);
-    res.status(204).send();
+    res.status(200).json({ message: "Post eliminato con successo" });
 };
 
 module.exports = {
