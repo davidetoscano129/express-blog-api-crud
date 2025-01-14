@@ -27,7 +27,7 @@ app.use(notFoundHandler);
 // Middleware per la gestione degli errori
 app.use(errorHandler);
 
-// Avvio del server
+// Avvio del serverconst port = 3001;
 app.listen(port, () => {
     console.log(`Server in ascolto su http://localhost:${port}`);
 });

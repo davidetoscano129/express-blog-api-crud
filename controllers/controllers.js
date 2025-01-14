@@ -2,15 +2,13 @@ const posts = require("../data"); // Importa i dati
 
 // Ottieni tutti i post
 const getAllPosts = (req, res) => {
-    res.json({
-        posts,
-        length: posts.length,
-    });
+    console.log("Post restituiti:", posts);
+    res.json(posts);
 };
 
 // Ottieni un singolo post tramite ID
 const getPostById = (req, res) => {
-    const postId = parseInt(req.params.id); // Confronto ID come numero
+    const postId = parseInt(req.params.id);
     const post = posts.find((p) => p.id === postId);
 
     if (!post) {
